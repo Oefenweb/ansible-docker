@@ -1,7 +1,4 @@
 ---
-docker_enabled_on_startup: true
-
-# Main options
 docker_binary: ''
 docker_opts: ''
 docker_http_proxy: ''
