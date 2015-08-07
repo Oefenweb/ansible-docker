@@ -1,0 +1,10 @@
+# vars file for docker
+---
+docker_backported_kernel_packages: []
+docker_dependencies: []
+docker_apt_key: []
+docker_repository:
+  - type: deb
+    url: "http://http.debian.net/debian jessie-backports"
+    component: main
+docker_package: docker.io
