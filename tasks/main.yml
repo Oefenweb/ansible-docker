@@ -14,7 +14,7 @@
 # Load the OS specific variables (config files and packages) for this
 # service. Vars files are on /var: Debian_jessie.yml, Ubuntu_trusty.yml ...
 - name: Include OS specific variables
-  include_vars: "{{ ansible_distribution }}_{{ ansible_distribution_release }}.yml"
+  include_vars: "{{ ansible_distribution }}.yml"
   tags: ["docker", "distribution", "packages", "service"]
 
 - name: apt update
