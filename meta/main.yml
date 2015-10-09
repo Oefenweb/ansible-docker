@@ -11,6 +11,9 @@ galaxy_info:
     versions:
       - precise
       - trusty
+  - name: Debian
+    versions:
+      - jessie
   categories:
     - development
     - packaging

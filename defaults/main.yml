@@ -1,4 +1,3 @@
-# defaults file for docker
 ---
 docker_binary: ''
 docker_opts: ''

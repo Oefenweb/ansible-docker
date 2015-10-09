@@ -1,0 +1,16 @@
+# vars file for docker
+---
+docker_backported_kernel_packages:
+  - linux-image-generic-lts-trusty
+  - linux-headers-generic-lts-trusty
+docker_dependencies:
+  - apparmor
+  - cgroup-lite
+docker_apt_key:
+  - id: A88D21E9
+    url: https://get.docker.com/gpg
+docker_repository:
+  - type: deb
+    url: "https://get.docker.com/ubuntu docker"
+    component: main
+docker_package: lxc-docker
