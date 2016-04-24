@@ -1,9 +1,4 @@
 # defaults file for docker
 ---
-docker_binary: ''
-docker_opts: ''
-docker_http_proxy: ''
-docker_tmpdir: ''
 docker_manage_ufw: true
 docker_manage_updatedb: true
-docker_install_api_client: false

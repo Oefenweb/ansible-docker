@@ -10,58 +10,44 @@
   apt:
     name: "{{ item }}"
     state: latest
-  with_items: docker_backported_kernel_packages
+  with_items: "{{ docker_backported_kernel_packages }}"
   register: backported_kernel_result
-  when: "ansible_distribution_version == '12.04' and docker_backported_kernel_packages"
+  when: ansible_distribution_version | version_compare('12.04', '==')
   tags: [configuration, docker, docker-backported-kernel]
 
 - name: reboot
-  command: "/sbin/shutdown -r now"
+  command: shutdown -r now
   async: 0
   poll: 0
   ignore_errors: true
-  register: backported_kernel_result
-  when: "(ansible_distribution_version == '12.04' and backported_kernel_result | changed)"
+  when: ansible_distribution_version | version_compare('12.04', '==') and backported_kernel_result | changed
   tags: [configuration, docker, docker-reboot]
 
 - name: wait for server to come online
-  local_action:
-    module: wait_for
+  wait_for:
     host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
     port: "{{ ansible_ssh_port | default(22) }}"
     delay: 15
     timeout: 600
     state: started
   sudo: false
-  when: "(ansible_distribution_version == '12.04' and backported_kernel_result | changed)"
+  when: ansible_distribution_version | version_compare('12.04', '==') and backported_kernel_result | changed
+  connection: local
   tags: [configuration, docker, docker-reboot]
 
 - name: install dependencies
   apt:
     name: "{{ item }}"
     state: latest
-  with_items: docker_dependencies
+  with_items: "{{ docker_dependencies }}"
   tags: [configuration, docker, docker-dependencies]
-
-- name: detect https transport for apt
-  stat:
-    path: "{{ docker_apt_https_transport_file }}"
-  register: https_transport_file_stats
-  tags: [configuration, docker, docker-https-transport]
-
-- name: install https transport for apt
-  apt:
-    name: apt-transport-https
-    state: latest
-  when: https_transport_file_stats.stat.exists == false
-  tags: [configuration, docker, docker-https-transport]
 
 - name: add public key
   apt_key:
     id: "{{ item.id }}"
-    url: "{{ item.url }}"
+    keyserver: "{{ item.keyserver }}"
     state: present
-  with_items: docker_apt_key
+  with_items: "{{ docker_apt_key }}"
   tags: [configuration, docker, docker-add-public-key]
 
 - name: add repository
@@ -69,12 +55,12 @@
     repo: "{{ item.type }} {{ item.url }} {{ item.component }}"
     state: present
     update_cache: true
-  with_items: docker_repository
+  with_items: "{{ docker_apt_repository }}"
   tags: [configuration, docker, docker-add-repository]
 
 - name: install
   apt:
-    name: "{{ docker_package }}"
+    name: "{{ docker_install }}"
     state: latest
   notify: reload docker
   tags: [configuration, docker, docker-install]
@@ -119,21 +105,6 @@
   tags: [configuration, docker, docker-updatedb]
 
 - name: disable indexing of /var/lib/docker
-  command: "/usr/bin/updatedb -e /var/lib/docker"
+  command: /usr/bin/updatedb -e /var/lib/docker
   when: docker_manage_updatedb and updatedb_file_stats.stat.exists
   tags: [configuration, docker, docker-updatedb]
-
-- name: install docker-py requirements
-  apt:
-    name: "{{ item }}"
-    state: latest
-  with_items: docker_api_client_requirements
-  when: docker_install_api_client
-  tags: [configuration, docker, docker-api-client]
-
-- name: install docker-py
-  pip:
-    name: docker-py
-    state: latest
-  when: docker_install_api_client
-  tags: [configuration, docker, docker-api-client]

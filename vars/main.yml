@@ -3,20 +3,25 @@
 docker_backported_kernel_packages:
   - linux-image-generic-lts-trusty
   - linux-headers-generic-lts-trusty
+
 docker_dependencies:
+  - apt-transport-https
+  - ca-certificates
+  - linux-image-extra-virtual
   - apparmor
   - cgroup-lite
-docker_apt_https_transport_file: /usr/lib/apt/methods/https
+
 docker_apt_key:
-  - id: A88D21E9
-    url: https://get.docker.com/gpg
-docker_repository:
+  - id: 58118E89F3A912897C070ADBF76221572C52609D
+    keyserver: keyserver.ubuntu.com
+
+docker_apt_repository:
   - type: deb
-    url: "https://get.docker.com/ubuntu docker"
+    url: "https://apt.dockerproject.org/repo {{ ansible_distribution | lower }}-{{ ansible_distribution_release }} main"
     component: main
-docker_package: lxc-docker
+
+docker_install:
+  - docker-engine
+
 docker_ufw_default_file: /etc/default/ufw
 docker_updatedb_file: /etc/updatedb.conf
-docker_api_client_requirements:
-  - python-dev
-  - python-pip
