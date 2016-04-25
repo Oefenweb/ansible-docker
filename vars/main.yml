@@ -9,7 +9,7 @@ docker_dependencies:
 docker_apt_https_transport_file: /usr/lib/apt/methods/https
 docker_apt_key:
   - id: A88D21E9
-    url: https://get.docker.com/gpg
+    url: http://get.docker.com/gpg
 docker_repository:
   - type: deb
     url: "https://get.docker.com/ubuntu docker"
