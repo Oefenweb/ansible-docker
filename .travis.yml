@@ -69,7 +69,7 @@ script:
 
   # Test installation
   - >
-    sudo docker run hello-world |
+    sudo docker run hello-world
     | grep -q 'Hello from Docker'
     && (echo 'Installation test: pass' && exit 0)
     || (echo 'Installation test: fail' && exit 1)
