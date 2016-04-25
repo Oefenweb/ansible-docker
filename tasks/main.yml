@@ -4,66 +4,46 @@
   apt:
     update_cache: true
     cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
-  tags: [configuration, docker, docker-apt-update]
+  tags:
+    - configuration
+    - docker
+    - docker-apt
+    - docker-apt-update
 
-- name: install backported kernel
+- include: backported-kernel.yml
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('12.04', '==')
+  tags:
+    - configuration
+    - docker
+    - docker-backported-kernel
+
+- name: install dependencies (pre)
   apt:
     name: "{{ item }}"
     state: latest
-  with_items: "{{ docker_backported_kernel_packages }}"
-  register: backported_kernel_result
-  when: ansible_distribution_version | version_compare('12.04', '==')
-  tags: [configuration, docker, docker-backported-kernel]
+  with_items: "{{ docker_dependencies_pre }}"
+  when: item != ''
+  tags:
+    - configuration
+    - docker
+    - docker-install-dependencies
 
-- name: reboot
-  command: shutdown -r now
-  async: 0
-  poll: 0
-  ignore_errors: true
-  when: ansible_distribution_version | version_compare('12.04', '==') and backported_kernel_result | changed
-  tags: [configuration, docker, docker-reboot]
-
-- name: wait for server to come online
-  wait_for:
-    host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
-    port: "{{ ansible_ssh_port | default(22) }}"
-    delay: 15
-    timeout: 600
-    state: started
-  sudo: false
-  when: ansible_distribution_version | version_compare('12.04', '==') and backported_kernel_result | changed
-  connection: local
-  tags: [configuration, docker, docker-reboot]
+- include: repository.yml
+  tags:
+    - configuration
+    - docker
+    - docker-repository
 
 - name: install dependencies
   apt:
     name: "{{ item }}"
     state: latest
   with_items: "{{ docker_dependencies }}"
-  tags: [configuration, docker, docker-dependencies]
-
-- name: add public key
-  apt_key:
-    id: "{{ item.id }}"
-    keyserver: "{{ item.keyserver }}"
-    state: present
-  with_items: "{{ docker_apt_key }}"
-  tags: [configuration, docker, docker-add-public-key]
-
-- name: add repository
-  apt_repository:
-    repo: "{{ item.type }} {{ item.url }} {{ item.component }}"
-    state: present
-    update_cache: true
-  with_items: "{{ docker_apt_repository }}"
-  tags: [configuration, docker, docker-add-repository]
-
-- name: install
-  apt:
-    name: "{{ docker_install }}"
-    state: latest
-  notify: reload docker
-  tags: [configuration, docker, docker-install]
+  notify: restart docker
+  tags:
+    - configuration
+    - docker
+    - docker-install
 
 - name: update configuration file - /etc/default/docker
   template:
@@ -72,39 +52,30 @@
     owner: root
     group: root
     mode: 0644
-  notify: reload docker
-  tags: [configuration, docker, docker-configuration]
+  notify: restart docker
+  tags:
+    - configuration
+    - docker
+    - docker-configuration
 
 - name: start and enable service
   service:
     name: docker
     state: started
     enabled: true
-  tags: [configuration, docker, docker-start-enable-service]
+  tags:
+    - configuration
+    - docker
+    - docker-start-enable-service
 
-- name: check ufw default file existence
-  stat:
-    path: "{{ docker_ufw_default_file }}"
-  register: ufw_default_file_stats
-  when: docker_manage_ufw
-  tags: [configuration, docker, docker-ufw]
+- include: ufw.yml
+  tags:
+    - configuration
+    - docker
+    - docker-ufw
 
-- name: change ufw default forward policy
-  lineinfile:
-    dest: "{{ docker_ufw_default_file }}"
-    regexp: "^DEFAULT_FORWARD_POLICY="
-    line: "DEFAULT_FORWARD_POLICY=\"ACCEPT\""
-  when: docker_manage_ufw and ufw_default_file_stats.stat.exists
-  tags: [configuration, docker, docker-ufw]
-
-- name: check updatedb file existence
-  stat:
-    path: "{{ docker_updatedb_file }}"
-  register: updatedb_file_stats
-  when: docker_manage_updatedb
-  tags: [configuration, docker, docker-updatedb]
-
-- name: disable indexing of /var/lib/docker
-  command: /usr/bin/updatedb -e /var/lib/docker
-  when: docker_manage_updatedb and updatedb_file_stats.stat.exists
-  tags: [configuration, docker, docker-updatedb]
+- include: updatedb.yml
+  tags:
+    - configuration
+    - docker
+    - docker-updatedb

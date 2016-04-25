@@ -1,0 +1,20 @@
+# tasks file for docker
+---
+- name: add public key
+  apt_key:
+    id: "{{ item.id }}"
+    url: "{{ item.url }}"
+    state: present
+  with_items: "{{ docker_apt_key }}"
+  tags:
+    - docker-repository-add-public-key
+
+- name: add repository
+  apt_repository:
+    repo: "{{ item.type }} {{ item.url }} {{ item.component }}"
+    state: present
+    update_cache: true
+  with_items: "{{ docker_apt_repository }}"
+  tags:
+    - docker-repository-add
+    - docker-repository-add-repository

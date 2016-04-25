@@ -1,0 +1,19 @@
+# tasks file for docker
+---
+- name: check ufw default file existence
+  stat:
+    path: "{{ docker_ufw_default_file }}"
+  register: ufw_default_file_stats
+  when: docker_manage_ufw
+  tags:
+    - docker-ufw-check-default-file-existence
+
+- name: change ufw default forward policy
+  lineinfile:
+    dest: "{{ docker_ufw_default_file }}"
+    regexp: '^DEFAULT_FORWARD_POLICY='
+    line: 'DEFAULT_FORWARD_POLICY="ACCEPT"'
+  when: docker_manage_ufw and ufw_default_file_stats.stat.exists
+  tags:
+    - docker-ufw-update-default-file
+    - docker-ufw-update-default-file-forward-policy

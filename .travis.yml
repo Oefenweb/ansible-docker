@@ -46,8 +46,8 @@ branches:
 before_install:
   - sudo apt-get update -qq
 
-  # Remove lxc-docker
-  - sudo apt-get remove --purge --yes lxc-docker || true
+  # Remove lxc-docker and docker.io
+  - sudo apt-get remove --purge --yes lxc-docker* docker.io* || true
 
 install:
   # Install Ansible.
@@ -56,6 +56,23 @@ install:
 script:
   # Check the role/playbook's syntax.
   - ansible-playbook -i tests/inventory tests/test.yml --syntax-check
+
+  # Run the role/playbook with ansible-playbook.
+  - ansible-playbook -i tests/inventory tests/test.yml -vvvv
+
+  # Run the role/playbook again, checking to make sure it's idempotent.
+  - >
+    ansible-playbook -i tests/inventory tests/test.yml
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+
+  # Test installation
+  - >
+    sudo docker run hello-world |
+    | grep -q 'Hello from Docker'
+    && (echo 'Installation test: pass' && exit 0)
+    || (echo 'Installation test: fail' && exit 1)
 
 notifications:
   email: false

@@ -1,0 +1,36 @@
+# tasks file for docker
+---
+- name: install backported kernel
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items: "{{ docker_backported_kernel_packages }}"
+  register: backported_kernel_result
+  tags:
+    - docker-backported-kernel-install
+
+- name: reboot
+  command: shutdown -r now
+  async: 0
+  poll: 0
+  ignore_errors: true
+  when: backported_kernel_result | changed
+  tags:
+    - docker-backported-kernel-apply
+    - docker-backported-kernel-reboot
+
+- name: wait for server to come online
+  wait_for:
+    host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
+    port: "{{ ansible_ssh_port | default(22) }}"
+    delay: 15
+    timeout: 600
+    state: started
+  sudo: false
+  when: backported_kernel_result | changed
+  connection: local
+  tags:
+  tags:
+    - docker-backported-kernel-apply
+    - docker-backported-kernel-reboot
+    - docker-backported-kernel-reboot-wait
