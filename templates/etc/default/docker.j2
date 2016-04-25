@@ -3,29 +3,29 @@
 # Docker Upstart and SysVinit configuration file
 
 # Customize location of Docker binary (especially for development testing).
-{% if docker_binary is defined %}
-DOCKER="{{ docker_binary }}"
+{% if docker_etc_default_binary is defined %}
+DOCKER="{{ docker_etc_default_binary }}"
 {% else %}
 #DOCKER="/usr/local/bin/docker"
 {% endif %}
 
 # Use DOCKER_OPTS to modify the daemon startup options.
-{% if docker_opts is defined %}
-DOCKER_OPTS="{{ docker_opts | join(' ') }}"
+{% if docker_etc_default_opts is defined %}
+DOCKER_OPTS="{{ docker_etc_default_opts | join(' ') }}"
 {% else %}
 #DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4"
 {% endif %}
 
 # If you need Docker to use an HTTP proxy, it can also be specified here.
-{% if docker_http_proxy is defined %}
-export http_proxy="{{ docker_http_proxy }}"
+{% if docker_etc_default_http_proxy is defined %}
+export http_proxy="{{ docker_etc_default_http_proxy }}"
 {% else %}
 #export http_proxy="http://127.0.0.1:3128/"
 {% endif %}
 
 # This is also a handy place to tweak where Docker's temporary files go.
-{% if docker_tmpdir is defined %}
-export TMPDIR="{{ docker_tmpdir }}"
+{% if docker_etc_default_tmpdir is defined %}
+export TMPDIR="{{ docker_etc_default_tmpdir }}"
 {% else %}
 #export TMPDIR="/mnt/bigdrive/docker-tmp"
 {% endif %}

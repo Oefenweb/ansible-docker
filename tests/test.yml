@@ -5,3 +5,5 @@
   sudo: true
   roles:
     - ../../
+  vars:
+    docker_manage_updatedb: false

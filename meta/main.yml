@@ -3,14 +3,17 @@
 galaxy_info:
   author: Mischa ter Smitten
   company: Oefenweb.nl B.V.
-  description: Set up the latest version of Docker Engine in Ubuntu systems
+  description: Set up the latest version of Docker Engine in Debian-like systems
   license: Apache v2.0
   min_ansible_version: 1.6
   platforms:
-  - name: Ubuntu
-    versions:
-      - precise
-      - trusty
+    - name: Ubuntu
+      versions:
+        - precise
+        - trusty
+    - name: Debian
+      versions:
+        - jessie
   galaxy_tags:
     - development
     - packaging
