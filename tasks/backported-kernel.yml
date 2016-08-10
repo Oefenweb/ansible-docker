@@ -30,7 +30,6 @@
   when: backported_kernel_result | changed
   connection: local
   tags:
-  tags:
     - docker-backported-kernel-apply
     - docker-backported-kernel-reboot
     - docker-backported-kernel-reboot-wait
