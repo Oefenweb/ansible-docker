@@ -10,19 +10,18 @@
     - docker-apt
     - docker-apt-update
 
+# TODO: Cleanup
 - include: backported-kernel.yml
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version | version_compare('12.04', '==')
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('12.04', '==')
   tags:
     - configuration
     - docker
     - docker-backported-kernel
 
-- name: install dependencies (pre)
+- name: install | dependencies | pre
   apt:
-    name: "{{ item }}"
+    name: "{{ docker_dependencies_pre }}"
     state: "{{ apt_install_state | default('latest') }}"
-  with_items: "{{ docker_dependencies_pre }}"
-  when: item != ''
   tags:
     - configuration
     - docker
@@ -34,18 +33,17 @@
     - docker
     - docker-repository
 
-- name: install dependencies
+- name: install | dependencies
   apt:
-    name: "{{ item }}"
+    name: "{{ docker_dependencies }}"
     state: "{{ apt_install_state | default('latest') }}"
-  with_items: "{{ docker_dependencies }}"
   notify: restart docker
   tags:
     - configuration
     - docker
     - docker-install
 
-- name: update configuration file - /etc/default/docker
+- name: configuration | update - /etc/default/docker
   template:
     src: etc/default/docker.j2
     dest: /etc/default/docker

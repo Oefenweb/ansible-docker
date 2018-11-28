@@ -1,15 +1,16 @@
 # tasks file for docker
 ---
-- name: check updatedb file existence
+- name: updatedb | check file existence
   stat:
     path: "{{ docker_updatedb_file }}"
-  register: updatedb_file_stats
+  register: _updatedb_file_stats
   when: docker_manage_updatedb
   tags:
     - docker-updatedb-check-file-existence
 
-- name: disable indexing of /var/lib/docker
-  command: /usr/bin/updatedb -e /var/lib/docker
-  when: docker_manage_updatedb and updatedb_file_stats.stat.exists
+- name: updatedb | disable indexing of /var/lib/docker
+  command: >
+    /usr/bin/updatedb -e /var/lib/docker
+  when: docker_manage_updatedb and _updatedb_file_stats.stat.exists
   tags:
     - docker-updatedb-disable-indexing

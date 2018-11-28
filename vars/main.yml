@@ -5,23 +5,28 @@ docker_backported_kernel_packages:
   - linux-image-generic-lts-trusty
   - linux-headers-generic-lts-trusty
 
+docker_dependencies_pre_dummy_package: apt
 docker_dependencies_pre:
   - apt-transport-https
   - ca-certificates
-  - "{{ 'linux-image-extra-virtual' if ansible_distribution == 'Ubuntu' else '' }}"
+  - curl
+  - software-properties-common
   - apparmor
-  - "{{ 'cgroup-lite' if ansible_distribution == 'Ubuntu' else '' }}"
+  - "{{ (ansible_distribution == 'Ubuntu') | ternary('linux-image-extra-virtual', docker_dependencies_pre_dummy_package) }}"
+  - "{{ (ansible_distribution == 'Ubuntu') | ternary('cgroup-lite', docker_dependencies_pre_dummy_package) }}"
 
-docker_apt_key:
-  - id: 2C52609D
-    url: https://apt.dockerproject.org/gpg
-docker_apt_repository:
-  - type: deb
-    url: "https://apt.dockerproject.org/repo {{ ansible_distribution | lower }}-{{ ansible_distribution_release }}"
-    component: main
+docker_apt_keys:
+  - id: 8D81803C0EBFCD88
+    url: https://download.docker.com/linux/ubuntu/gpg
+docker_apt_repositories:
+  - type: 'deb [arch=amd64]'
+    url: "https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }}"
+    component: stable
+
+docker_downloads_path: /var/lib/ansible/docker/downloads
 
 docker_dependencies:
-  - docker-engine
+  - docker-ce
 
 docker_ufw_default_file: /etc/default/ufw
 docker_updatedb_file: /etc/updatedb.conf

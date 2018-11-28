@@ -1,20 +1,70 @@
 # tasks file for docker
 ---
-- name: add public key
-  apt_key:
-    id: "{{ item.id }}"
-    url: "{{ item.url }}"
-    state: present
-  with_items: "{{ docker_apt_key }}"
+- name: repository | dependencies
+  apt:
+    name: "{{ docker_dependencies_pre }}"
+    state: "{{ apt_install_state | default('latest') }}"
+    update_cache: true
+    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
   tags:
-    - docker-repository-add-public-key
+    - docker-repository-dependencies
 
-- name: add repository
+- name: repository | get python version
+  shell: python --version 2>&1 | awk '{print $2}'
+  register: _python_version
+  changed_when: false
+  tags:
+    - docker-repository-get-python-version
+
+# Old python (TLS issues)
+- block:
+  - name: repository | create (download) directory
+    file:
+      path: "{{ docker_downloads_path }}"
+      state: directory
+      owner: root
+      group: root
+      mode: 0755
+    tags:
+      - docker-repository-directory
+      - docker-repository-directory-create
+
+  - name: repository | download public key
+    command: >
+      curl -sSL {{ item.url }} -o {{ docker_downloads_path }}/{{ item.id }}.key
+    args:
+      creates: "{{ docker_downloads_path }}/{{ item.id }}.key"
+    with_items: "{{ docker_apt_keys }}"
+    tags:
+      - docker-repository-public-key
+
+  - name: repository | add public key
+    apt_key:
+      id: "{{ item.id }}"
+      file: "{{ docker_downloads_path }}/{{ item.id }}.key"
+      state: present
+    with_items: "{{ docker_apt_keys }}"
+    tags:
+      - docker-repository-public-key
+  when: _python_version.stdout is version('2.7.9', '<')
+
+# New python
+- block:
+  - name: repository | add public key
+    apt_key:
+      id: "{{ item.id }}"
+      url: "{{ item.url }}"
+      state: present
+    with_items: "{{ docker_apt_keys }}"
+    tags:
+      - docker-repository-public-key
+  when: _python_version.stdout is version('2.7.9', '>=')
+
+- name: repository | add
   apt_repository:
     repo: "{{ item.type }} {{ item.url }} {{ item.component }}"
     state: present
     update_cache: true
-  with_items: "{{ docker_apt_repository }}"
+  with_items: "{{ docker_apt_repositories }}"
   tags:
     - docker-repository-add
-    - docker-repository-add-repository
