@@ -1,23 +1,5 @@
 # tasks file for docker
 ---
-- name: apt update
-  apt:
-    update_cache: true
-    cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
-  tags:
-    - configuration
-    - docker
-    - docker-apt
-    - docker-apt-update
-
-# TODO: Cleanup
-- include: backported-kernel.yml
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version is version('12.04', '==')
-  tags:
-    - configuration
-    - docker
-    - docker-backported-kernel
-
 - name: install | dependencies | pre
   apt:
     name: "{{ docker_dependencies_pre }}"
@@ -25,7 +7,9 @@
   tags:
     - configuration
     - docker
+    - docker-install
     - docker-install-dependencies
+    - docker-install-dependencies-pre
 
 - include: repository.yml
   tags:
@@ -42,6 +26,7 @@
     - configuration
     - docker
     - docker-install
+    - docker-install-dependencies
 
 - name: configuration | update - /etc/default/docker
   template:
@@ -55,6 +40,7 @@
     - configuration
     - docker
     - docker-configuration
+    - docker-configuration-update
 
 - name: start and enable service
   service:

@@ -1,10 +1,5 @@
 # vars file for docker
 ---
-# For Ubuntu 12.04
-docker_backported_kernel_packages:
-  - linux-image-generic-lts-trusty
-  - linux-headers-generic-lts-trusty
-
 docker_dependencies_pre_dummy_package: apt
 docker_dependencies_pre:
   - apt-transport-https
