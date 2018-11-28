@@ -8,8 +8,10 @@ Set up the latest version of [Docker Engine](https://docs.docker.com/engine/) in
 
 * `apt-transport-https` (will be installed)
 * `ca-certificates` (will be installed)
-* `linux-image-extra-virtual` (will be installed, Ubuntu only)
+* `curl` (will be installed)
+* `software-properties-common` (will be installed)
 * `apparmor` (will be installed)
+* `linux-image-extra-virtual` (will be installed, Ubuntu only)
 * `cgroup-lite` (will be installed, Ubuntu only)
 
 #### Variables
