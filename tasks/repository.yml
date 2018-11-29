@@ -34,6 +34,7 @@
       curl -sSL {{ item.url }} -o {{ docker_downloads_path }}/{{ item.id }}.key
     args:
       creates: "{{ docker_downloads_path }}/{{ item.id }}.key"
+      warn: false
     with_items: "{{ docker_apt_keys }}"
     tags:
       - docker-repository-public-key
