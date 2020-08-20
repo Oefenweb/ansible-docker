@@ -28,10 +28,10 @@
     - docker-install
     - docker-install-dependencies
 
-- name: configuration | update - /etc/default/docker
+- name: configuration | update
   template:
-    src: etc/default/docker.j2
-    dest: /etc/default/docker
+    src: "{{ docker_docker_default_file.lstrip('/') }}.j2"
+    dest: "{{ docker_docker_default_file }}"
     owner: root
     group: root
     mode: 0644

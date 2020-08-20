@@ -23,5 +23,6 @@ docker_downloads_path: /var/lib/ansible/docker/downloads
 docker_dependencies:
   - docker-ce
 
+docker_docker_default_file: /etc/default/docker
 docker_ufw_default_file: /etc/default/ufw
 docker_updatedb_file: /etc/updatedb.conf

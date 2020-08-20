@@ -11,6 +11,8 @@
 - name: updatedb | disable indexing of /var/lib/docker
   command: >
     /usr/bin/updatedb -e /var/lib/docker
-  when: docker_manage_updatedb and _updatedb_file_stats.stat.exists
+  when:
+    - docker_manage_updatedb
+    - _updatedb_file_stats.stat.exists
   tags:
     - docker-updatedb-disable-indexing

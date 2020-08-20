@@ -10,7 +10,8 @@
     - docker-repository-dependencies
 
 - name: repository | get python version
-  shell: python --version 2>&1 | awk '{print $2}'
+  shell: >
+    python --version 2>&1 | awk '{print $2}'
   register: _python_version
   changed_when: false
   tags:
