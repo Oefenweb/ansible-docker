@@ -53,12 +53,14 @@
     - docker-start-enable-service
 
 - include: ufw.yml
+  when: docker_manage_ufw | bool
   tags:
     - configuration
     - docker
     - docker-ufw
 
 - include: updatedb.yml
+  when: docker_manage_updatedb
   tags:
     - configuration
     - docker

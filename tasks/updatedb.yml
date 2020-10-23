@@ -4,15 +4,12 @@
   stat:
     path: "{{ docker_updatedb_file }}"
   register: _updatedb_file_stats
-  when: docker_manage_updatedb
   tags:
     - docker-updatedb-check-file-existence
 
 - name: updatedb | disable indexing of /var/lib/docker
   command: >
     /usr/bin/updatedb -e /var/lib/docker
-  when:
-    - docker_manage_updatedb
-    - _updatedb_file_stats.stat.exists
+  when: _updatedb_file_stats.stat.exists
   tags:
     - docker-updatedb-disable-indexing
