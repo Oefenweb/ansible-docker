@@ -9,14 +9,6 @@
   tags:
     - docker-repository-dependencies
 
-- name: repository | get python version
-  shell: >
-    python --version 2>&1 | awk '{print $2}'
-  register: _python_version
-  changed_when: false
-  tags:
-    - docker-repository-get-python-version
-
 # Old python (TLS issues)
 - block:
   - name: repository | create (download) directory
@@ -48,7 +40,7 @@
     with_items: "{{ docker_apt_keys }}"
     tags:
       - docker-repository-public-key
-  when: _python_version.stdout is version('2.7.9', '<')
+  when: ansible_python_version is version('2.7.9', '<')
 
 # New python
 - block:
@@ -60,7 +52,7 @@
     with_items: "{{ docker_apt_keys }}"
     tags:
       - docker-repository-public-key
-  when: _python_version.stdout is version('2.7.9', '>=')
+  when: ansible_python_version is version('2.7.9', '>=')
 
 - name: repository | add
   apt_repository:
