@@ -1,4 +1,4 @@
-# defaults file for docker
+# defaults file
 ---
 docker_manage_ufw: true
 docker_manage_updatedb: true

@@ -1,4 +1,4 @@
-# tasks file for docker
+# tasks file
 ---
 - name: ufw | check default file existence
   stat:

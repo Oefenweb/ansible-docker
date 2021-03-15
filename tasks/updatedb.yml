@@ -1,4 +1,4 @@
-# tasks file for docker
+# tasks file
 ---
 - name: updatedb | check file existence
   stat:

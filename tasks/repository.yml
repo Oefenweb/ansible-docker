@@ -1,4 +1,4 @@
-# tasks file for docker
+# tasks file
 ---
 - name: repository | dependencies
   apt:
@@ -11,47 +11,51 @@
 
 # Old python (TLS issues)
 - block:
-  - name: repository | create (download) directory
-    file:
-      path: "{{ docker_downloads_path }}"
-      state: directory
-      owner: root
-      group: root
-      mode: 0755
-    tags:
-      - docker-repository-directory
-      - docker-repository-directory-create
 
-  - name: repository | download public key
-    command: >
-      curl -sSL {{ item.url }} -o {{ docker_downloads_path }}/{{ item.id }}.key
-    args:
-      creates: "{{ docker_downloads_path }}/{{ item.id }}.key"
-      warn: false
-    with_items: "{{ docker_apt_keys }}"
-    tags:
-      - docker-repository-public-key
+    - name: repository | create (download) directory
+      file:
+        path: "{{ docker_downloads_path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+      tags:
+        - docker-repository-directory
+        - docker-repository-directory-create
 
-  - name: repository | add public key
-    apt_key:
-      id: "{{ item.id }}"
-      file: "{{ docker_downloads_path }}/{{ item.id }}.key"
-      state: present
-    with_items: "{{ docker_apt_keys }}"
-    tags:
-      - docker-repository-public-key
+    - name: repository | download public key
+      command: >
+        curl -sSL {{ item.url }} -o {{ docker_downloads_path }}/{{ item.id }}.key
+      args:
+        creates: "{{ docker_downloads_path }}/{{ item.id }}.key"
+        warn: false
+      with_items: "{{ docker_apt_keys }}"
+      tags:
+        - docker-repository-public-key
+
+    - name: repository | add public key
+      apt_key:
+        id: "{{ item.id }}"
+        file: "{{ docker_downloads_path }}/{{ item.id }}.key"
+        state: present
+      with_items: "{{ docker_apt_keys }}"
+      tags:
+        - docker-repository-public-key
+
   when: ansible_python_version is version('2.7.9', '<')
 
 # New python
 - block:
-  - name: repository | add public key
-    apt_key:
-      id: "{{ item.id }}"
-      url: "{{ item.url }}"
-      state: present
-    with_items: "{{ docker_apt_keys }}"
-    tags:
-      - docker-repository-public-key
+
+    - name: repository | add public key
+      apt_key:
+        id: "{{ item.id }}"
+        url: "{{ item.url }}"
+        state: present
+      with_items: "{{ docker_apt_keys }}"
+      tags:
+        - docker-repository-public-key
+
   when: ansible_python_version is version('2.7.9', '>=')
 
 - name: repository | add

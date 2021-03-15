@@ -1,4 +1,4 @@
-# vars file for docker
+# vars file
 ---
 docker_dependencies_pre_dummy_package: apt
 docker_dependencies_pre:

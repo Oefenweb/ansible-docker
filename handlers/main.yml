@@ -1,4 +1,4 @@
-# handlers file for docker
+# handlers file
 ---
 - name: restart docker
   service:
