@@ -1,16 +1,5 @@
 # tasks file
 ---
-- name: install | dependencies | pre
-  apt:
-    name: "{{ docker_dependencies_pre }}"
-    state: "{{ apt_install_state | default('latest') }}"
-  tags:
-    - configuration
-    - docker
-    - docker-install
-    - docker-install-dependencies
-    - docker-install-dependencies-pre
-
 - include: repository.yml
   tags:
     - configuration

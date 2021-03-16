@@ -2,10 +2,10 @@
 ---
 docker_dependencies_pre_dummy_package: apt
 docker_dependencies_pre:
-  - apt-transport-https
-  - ca-certificates
-  - curl
   - software-properties-common
+  - dirmngr
+  - apt-transport-https
+  - curl
   - apparmor
   - "{{ (ansible_distribution == 'Ubuntu') | ternary('linux-image-extra-virtual', docker_dependencies_pre_dummy_package) }}"
   - "{{ (ansible_distribution == 'Ubuntu') | ternary('cgroup-lite', docker_dependencies_pre_dummy_package) }}"

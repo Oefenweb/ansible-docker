@@ -1,6 +1,6 @@
 ## docker
 
-[![Build Status](https://travis-ci.org/Oefenweb/ansible-docker.svg?branch=master)](https://travis-ci.org/Oefenweb/ansible-docker)
+[![CI](https://github.com/Oefenweb/ansible-docker/workflows/CI/badge.svg)](https://github.com/Oefenweb/ansible-docker/actions?query=workflow%3ACI)
 [![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-docker-blue.svg)](https://galaxy.ansible.com/Oefenweb/docker)
 
 Set up the latest version of [Docker Engine](https://docs.docker.com/engine/) in Debian-like systems.
