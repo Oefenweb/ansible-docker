@@ -1,7 +1,7 @@
 # handlers file
 ---
 - name: restart docker
-  service:
+  ansible.builtin.service:
     name: docker
     state: restarted
   when: service_default_state | default('started') == 'started'

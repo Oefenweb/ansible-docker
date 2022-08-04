@@ -1,14 +1,14 @@
 # tasks file
 ---
 - name: updatedb | check file existence
-  stat:
+  ansible.builtin.stat:
     path: "{{ docker_updatedb_file }}"
   register: _updatedb_file_stats
   tags:
     - docker-updatedb-check-file-existence
 
 - name: updatedb | disable indexing of /var/lib/docker
-  command: >
+  ansible.builtin.command: >
     /usr/bin/updatedb -e /var/lib/docker
   when: _updatedb_file_stats.stat.exists
   tags:

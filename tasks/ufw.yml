@@ -1,14 +1,14 @@
 # tasks file
 ---
 - name: ufw | check default file existence
-  stat:
+  ansible.builtin.stat:
     path: "{{ docker_ufw_default_file }}"
   register: _ufw_default_file_stats
   tags:
     - docker-ufw-check-default-file-existence
 
 - name: ufw | change default forward policy
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: "{{ docker_ufw_default_file }}"
     regexp: '^DEFAULT_FORWARD_POLICY='
     line: 'DEFAULT_FORWARD_POLICY="ACCEPT"'

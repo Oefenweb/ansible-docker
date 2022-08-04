@@ -1,13 +1,13 @@
 # tasks file
 ---
-- include: repository.yml
+- ansible.builtin.include: repository.yml
   tags:
     - configuration
     - docker
     - docker-repository
 
 - name: install | dependencies
-  apt:
+  ansible.builtin.apt:
     name: "{{ docker_dependencies }}"
     state: "{{ apt_install_state | default('latest') }}"
   notify: restart docker
@@ -18,7 +18,7 @@
     - docker-install-dependencies
 
 - name: configuration | update
-  template:
+  ansible.builtin.template:
     src: "{{ docker_docker_default_file.lstrip('/') }}.j2"
     dest: "{{ docker_docker_default_file }}"
     owner: root
@@ -32,7 +32,7 @@
     - docker-configuration-update
 
 - name: start and enable service
-  service:
+  ansible.builtin.service:
     name: docker
     state: "{{ service_default_state | default('started') }}"
     enabled: "{{ service_default_enabled | default(true) | bool }}"
@@ -41,14 +41,14 @@
     - docker
     - docker-start-enable-service
 
-- include: ufw.yml
+- ansible.builtin.include: ufw.yml
   when: docker_manage_ufw | bool
   tags:
     - configuration
     - docker
     - docker-ufw
 
-- include: updatedb.yml
+- ansible.builtin.include: updatedb.yml
   when: docker_manage_updatedb
   tags:
     - configuration
