@@ -24,12 +24,11 @@
         - docker-repository-directory
         - docker-repository-directory-create
 
-    - name: repository | download public key
+    - name: repository | download public key  # noqa command-instead-of-module
       ansible.builtin.command: >
         curl -sSL {{ item.url }} -o {{ docker_downloads_path }}/{{ item.id }}.key
       args:
         creates: "{{ docker_downloads_path }}/{{ item.id }}.key"
-        warn: false
       with_items: "{{ docker_apt_keys }}"
       tags:
         - docker-repository-public-key
