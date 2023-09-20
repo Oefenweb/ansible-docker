@@ -1,6 +1,7 @@
 # tasks file
 ---
-- ansible.builtin.include: repository.yml
+- name: repository
+  ansible.builtin.import_tasks: repository.yml
   tags:
     - configuration
     - docker
@@ -41,14 +42,16 @@
     - docker
     - docker-start-enable-service
 
-- ansible.builtin.include: ufw.yml
+- name: ufw
+  ansible.builtin.import_tasks: ufw.yml
   when: docker_manage_ufw | bool
   tags:
     - configuration
     - docker
     - docker-ufw
 
-- ansible.builtin.include: updatedb.yml
+- name: updatedb
+  ansible.builtin.import_tasks: updatedb.yml
   when: docker_manage_updatedb
   tags:
     - configuration
