@@ -43,7 +43,7 @@ None
 ---
 - hosts: all
   roles:
-    - docker
+    - oefenweb.docker
 ```
 
 #### License
