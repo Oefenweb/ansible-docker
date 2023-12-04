@@ -1,14 +1,13 @@
 # vars file
 ---
-docker_dependencies_pre_dummy_package: apt
 docker_dependencies_pre:
   - software-properties-common
   - dirmngr
   - apt-transport-https
   - curl
   - apparmor
-  - "{{ (ansible_distribution == 'Ubuntu') | ternary('linux-image-extra-virtual', docker_dependencies_pre_dummy_package) }}"
-  - "{{ (ansible_distribution == 'Ubuntu') | ternary('cgroup-lite', docker_dependencies_pre_dummy_package) }}"
+  - "{{ (ansible_distribution == 'Ubuntu') | ternary('linux-image-extra-virtual', '') }}"
+  - "{{ (ansible_distribution == 'Ubuntu') | ternary('cgroup-lite', '') }}"
 
 docker_apt_keys:
   - id: 8D81803C0EBFCD88
