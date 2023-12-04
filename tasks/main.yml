@@ -52,7 +52,7 @@
 
 - name: updatedb
   ansible.builtin.import_tasks: updatedb.yml
-  when: docker_manage_updatedb
+  when: docker_manage_updatedb | bool
   tags:
     - configuration
     - docker

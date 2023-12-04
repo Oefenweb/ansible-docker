@@ -11,5 +11,6 @@
   ansible.builtin.command: >
     /usr/bin/updatedb -e /var/lib/docker
   when: _updatedb_file_stats.stat.exists
+  changed_when: true
   tags:
     - docker-updatedb-disable-indexing

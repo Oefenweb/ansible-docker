@@ -2,7 +2,7 @@
 ---
 - name: repository | dependencies
   ansible.builtin.apt:
-    name: "{{ docker_dependencies_pre }}"
+    name: "{{ ' '.join(docker_dependencies_pre).split() }}"
     state: "{{ apt_install_state | default('latest') }}"
     update_cache: true
     cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
@@ -11,8 +11,8 @@
 
 # Old python (TLS issues)
 - name: repository | old python
+  when: ansible_python_version is version('2.7.9', '<')
   block:
-
     - name: repository | create (download) directory
       ansible.builtin.file:
         path: "{{ docker_downloads_path }}"
@@ -42,12 +42,10 @@
       tags:
         - docker-repository-public-key
 
-  when: ansible_python_version is version('2.7.9', '<')
-
 # New python
 - name: repository | new python
+  when: ansible_python_version is version('2.7.9', '>=')
   block:
-
     - name: repository | add public key
       ansible.builtin.apt_key:
         id: "{{ item.id }}"
@@ -56,8 +54,6 @@
       with_items: "{{ docker_apt_keys }}"
       tags:
         - docker-repository-public-key
-
-  when: ansible_python_version is version('2.7.9', '>=')
 
 - name: repository | add
   ansible.builtin.apt_repository:
