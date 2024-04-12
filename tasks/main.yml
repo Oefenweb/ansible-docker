@@ -18,6 +18,16 @@
     - docker-install
     - docker-install-dependencies
 
+- name: install additional
+  ansible.builtin.apt:
+    name: "{{ docker_install }}"
+    state: "{{ apt_install_state | default('latest') }}"
+  tags:
+    - configuration
+    - docker
+    - docker-install
+    - docker-install-additional
+
 - name: configuration | update
   ansible.builtin.template:
     src: "{{ docker_docker_default_file.lstrip('/') }}.j2"

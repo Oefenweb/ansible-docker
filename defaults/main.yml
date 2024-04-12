@@ -1,4 +1,5 @@
 # defaults file
 ---
+docker_install: []
 docker_manage_ufw: true
 docker_manage_updatedb: true
