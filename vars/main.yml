@@ -3,6 +3,7 @@
 docker_dependencies_pre:
   - software-properties-common
   - dirmngr
+  - gpg-agent
   - apt-transport-https
   - curl
   - apparmor
