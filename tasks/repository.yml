@@ -19,13 +19,13 @@
   tags:
     - docker-repository-keyrings-directory-create
 
-- name: repository | (keyring) file | download
-  ansible.builtin.apt_key:
-    url: "{{ docker_keyring_src }}"
-    keyring: "{{ docker_keyring_dst }}"
-    state: present
+- name: repository | (keyring) file | download  # noqa command-instead-of-module risky-shell-pipe
+  ansible.builtin.shell: >
+    wget -O {{ docker_keyring_dst }} {{ docker_keyring_src }}
+  args:
+    creates: "{{ docker_keyring_dst }}"
   tags:
-    - insync-repository-keyring-file-download
+    - docker-repository-keyring-file-download
 
 - name: repository | add
   ansible.builtin.apt_repository:

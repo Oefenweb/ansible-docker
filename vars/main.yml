@@ -15,11 +15,11 @@ docker_dependencies_pre:
   - software-properties-common
   - dirmngr
   - apt-transport-https
+  - wget
+  - coreutils
   - apparmor
   - "{{ (ansible_distribution == 'Ubuntu') | ternary('linux-image-extra-virtual', '') }}"
   - "{{ (ansible_distribution == 'Ubuntu') | ternary('cgroup-lite', '') }}"
-
-docker_downloads_path: /var/lib/ansible/docker/downloads
 
 docker_dependencies:
   - docker-ce
