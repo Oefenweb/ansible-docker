@@ -33,6 +33,6 @@
     state: "{{ item.state | default('present') }}"
     update_cache: true
     mode: 0644
-  with_items: "{{ docker_repositories }}"
+  with_items: "{{ docker_apt_repositories }}"
   tags:
     - docker-repository-add
