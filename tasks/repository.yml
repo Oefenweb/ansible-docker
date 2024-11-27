@@ -1,65 +1,38 @@
 # tasks file
 ---
-- name: repository | dependencies
+- name: repository | install dependencies (pre)
   ansible.builtin.apt:
     name: "{{ ' '.join(docker_dependencies_pre).split() }}"
     state: "{{ apt_install_state | default('latest') }}"
     update_cache: true
     cache_valid_time: "{{ apt_update_cache_valid_time | default(3600) }}"
   tags:
-    - docker-repository-dependencies
+    - docker-repository-install-dependencies
 
-# Old python (TLS issues)
-- name: repository | old python
-  when: ansible_python_version is version('2.7.9', '<')
-  block:
-    - name: repository | create (download) directory
-      ansible.builtin.file:
-        path: "{{ docker_downloads_path }}"
-        state: directory
-        owner: root
-        group: root
-        mode: 0755
-      tags:
-        - docker-repository-directory
-        - docker-repository-directory-create
+- name: repository | (keyrings) directory | create
+  ansible.builtin.file:
+    path: "{{ docker_keyring_dst | dirname }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - docker-repository-keyrings-directory-create
 
-    - name: repository | download public key  # noqa command-instead-of-module
-      ansible.builtin.command: >
-        curl -sSL {{ item.url }} -o {{ docker_downloads_path }}/{{ item.id }}.key
-      args:
-        creates: "{{ docker_downloads_path }}/{{ item.id }}.key"
-      with_items: "{{ docker_apt_keys }}"
-      tags:
-        - docker-repository-public-key
-
-    - name: repository | add public key
-      ansible.builtin.apt_key:
-        id: "{{ item.id }}"
-        file: "{{ docker_downloads_path }}/{{ item.id }}.key"
-        state: present
-      with_items: "{{ docker_apt_keys }}"
-      tags:
-        - docker-repository-public-key
-
-# New python
-- name: repository | new python
-  when: ansible_python_version is version('2.7.9', '>=')
-  block:
-    - name: repository | add public key
-      ansible.builtin.apt_key:
-        id: "{{ item.id }}"
-        url: "{{ item.url }}"
-        state: present
-      with_items: "{{ docker_apt_keys }}"
-      tags:
-        - docker-repository-public-key
+- name: repository | (keyring) file | download  # noqa command-instead-of-module risky-shell-pipe
+  ansible.builtin.shell: >
+    wget -O {{ docker_keyring_dst }} {{ docker_keyring_src }}
+  args:
+    creates: "{{ docker_keyring_dst }}"
+  tags:
+    - docker-repository-keyring-file-download
 
 - name: repository | add
   ansible.builtin.apt_repository:
     repo: "{{ item.type }} {{ item.url }} {{ item.component }}"
-    state: present
+    state: "{{ item.state | default('present') }}"
     update_cache: true
+    mode: 0644
   with_items: "{{ docker_apt_repositories }}"
   tags:
     - docker-repository-add
