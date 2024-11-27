@@ -16,7 +16,6 @@ docker_dependencies_pre:
   - dirmngr
   - apt-transport-https
   - wget
-  - coreutils
   - apparmor
   - "{{ (ansible_distribution == 'Ubuntu') | ternary('linux-image-extra-virtual', '') }}"
   - "{{ (ansible_distribution == 'Ubuntu') | ternary('cgroup-lite', '') }}"

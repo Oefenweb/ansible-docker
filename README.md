@@ -11,7 +11,6 @@ Set up the latest version of [Docker Engine](https://docs.docker.com/engine/) in
 * `dirmngr` (will be installed)
 * `apt-transport-https` (will be installed)
 * `wget` (will be installed)
-* `coreutils` (will be installed)
 * `apparmor` (will be installed)
 * `linux-image-extra-virtual` (will be installed, `Ubuntu` only)
 * `cgroup-lite` (will be installed, `Ubuntu` only)
