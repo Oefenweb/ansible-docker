@@ -15,7 +15,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: '0755'
   tags:
     - docker-repository-keyrings-directory-create
 
@@ -32,7 +32,7 @@
     repo: "{{ item.type }} {{ item.url }} {{ item.component }}"
     state: "{{ item.state | default('present') }}"
     update_cache: true
-    mode: 0644
+    mode: '0644'
   with_items: "{{ docker_apt_repositories }}"
   tags:
     - docker-repository-add

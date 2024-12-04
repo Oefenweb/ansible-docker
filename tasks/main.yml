@@ -34,7 +34,7 @@
     dest: "{{ docker_docker_default_file }}"
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   notify: restart docker
   tags:
     - configuration
